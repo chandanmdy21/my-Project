@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Fraud Suite - Access Gateway</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+</head>
+
+
+
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <div class="glow-orb"></div>
+            <h2>Cyber Security Suite</h2>
+            <p class="subtitle" id="form-subtitle">
+                {% if form_type == "register" %}
+                New Agent Registration
+                {% else %}
+                Secure Command Center Access
+                {% endif %}
+            </p>
+
+            <!-- LOGIN FORM -->
+            <form id="login-form" action="/login" method="POST" {% if form_type=="register" %} style="display:none;" {%
+                endif %}>
+
+                <div class="input-group">
+                    <input type="text" name="username" required>
+                    <label>Agent ID</label>
+                </div>
+
+                <div class="input-group">
+                    <input type="password" name="password" required>
+                    <label>Passcode</label>
+                </div>
+
+                {% if error and form_type == 'login' %}
+                <p class="error-msg">{{ error }}</p>
+                {% endif %}
+
+                {% if success_msg %}
+                <p class="success-msg">{{ success_msg }}</p>
+                {% endif %}
+
+                <button type="submit" class="login-btn">
+                    <span>Initialize Access</span>
+                    <div class="btn-glow"></div>
+                </button>
+
+                <p class="toggle-text">
+                    New agent?
+                    <span onclick="toggleForm('register')">Request Clearance</span>
+                </p>
+            </form>
+
+            <!-- REGISTER FORM -->
+            <form id="register-form" action="/register" method="POST" {% if form_type !="register" %}
+                style="display:none;" {% endif %}>
+
+                <div class="input-group">
+                    <input type="text" name="username" required minlength="4">
+                    <label>Choose Agent ID</label>
+                </div>
+
+                <div class="input-group">
+                    <input type="password" name="password" required minlength="6">
+                    <label>Set Passcode</label>
+                </div>
+
+                <div class="input-group">
+                    <input type="password" name="confirm_password" required minlength="6">
+                    <label>Confirm Passcode</label>
+                </div>
+
+                {% if error and form_type == 'register' %}
+                <p class="error-msg">{{ error }}</p>
+                {% endif %}
+
+                <button type="submit" class="login-btn">
+                    <span>Request Verification</span>
+                    <div class="btn-glow"></div>
+                </button>
+
+                <p class="toggle-text">
+                    Already verified?
+                    <span onclick="toggleForm('login')">Initialize Access</span>
+                </p>
+            </form>
+
+        </div>
+    </div>
+
+    <script>
+        function toggleForm(type) {
+            const loginForm = document.getElementById('login-form');
+            const registerForm = document.getElementById('register-form');
+            const subtitle = document.getElementById('form-subtitle');
+
+            if (type === 'register') {
+                loginForm.style.display = 'none';
+                registerForm.style.display = 'block';
+                subtitle.innerText = "New Agent Registration";
+            } else {
+                registerForm.style.display = 'none';
+                loginForm.style.display = 'block';
+                subtitle.innerText = "Secure Command Center Access";
+            }
+        }
+    </script>
+
+</body>
+
+</html>

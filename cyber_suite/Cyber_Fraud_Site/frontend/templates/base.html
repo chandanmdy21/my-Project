@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CYBER_SENTINEL | HUD</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Fira+Code&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-blue: #00f2ff;
+            --bg-black: #050505;
+            --glass: rgba(0, 242, 255, 0.05);
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg-black);
+            font-family: 'Fira Code', monospace;
+            color: white;
+            /* Global Background from your screenshot */
+            background-image: url("https://i.pinimg.com/736x/86/e6/d0/86e6d0c01278ccb39a21c31b8ef6741a.jpg");
+            background-size: cover;
+            background-attachment: fixed;
+        }
+
+        /* NAVIGATION BAR */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 40px;
+            height: 70px;
+            background: rgba(10, 10, 10, 0.9);
+            border-bottom: 2px solid var(--neon-blue);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--neon-blue);
+            letter-spacing: 3px;
+            font-weight: bold;
+            text-shadow: 0 0 10px var(--neon-blue);
+        }
+
+        /* PROFILE SECTION */
+        .user-menu {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .profile-trigger {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 15px;
+            border: 1px solid rgba(0, 242, 255, 0.3);
+            background: var(--glass);
+            transition: 0.3s;
+        }
+
+        .profile-trigger:hover {
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
+        }
+
+        .avatar-circle {
+            width: 32px;
+            height: 32px;
+            background: var(--neon-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: black;
+            font-size: 18px;
+        }
+
+        .username-text {
+            color: var(--neon-blue);
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+
+        /* DROPDOWN MENU */
+        .dropdown-content {
+            display: none; /* Hidden by default */
+            position: absolute;
+            right: 0;
+            top: 100%;
+            width: 200px;
+            background: #0a0a0a;
+            border: 1px solid var(--neon-blue);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            margin-top: 10px;
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: 12px 20px;
+            color: white;
+            text-decoration: none;
+            font-size: 13px;
+            border-bottom: 1px solid rgba(0, 242, 255, 0.1);
+            transition: 0.2s;
+        }
+
+        .dropdown-content a:hover {
+            background: var(--neon-blue);
+            color: black;
+        }
+
+        /* JavaScript Toggle Class */
+        .user-menu.active .dropdown-content {
+            display: block;
+        }
+
+        .main-content {
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+   <nav class="navbar">
+    <div class="logo">⚡ CYBER_SENTINEL</div>
+
+    <div class="user-menu" id="profileMenu" onclick="toggleDropdown()">
+        <div class="profile-trigger">
+            <div class="avatar-circle">👤</div>
+            <span class="username-text">{{ session.username }}</span>
+        </div>
+        
+        <div class="dropdown-content">
+            <a href="/profile">USER_PROFILE</a>
+            <a href="/dashboard">ANALYTICS_DASHBOARD</a>
+            <hr style="border: 0; border-top: 1px solid rgba(0,242,255,0.1); margin: 0;">
+            <a href="/logout" style="color: #ff0055;">TERMINATE_SESSION</a>
+        </div>
+    </div>
+</nav>
+
+        <div class="user-menu" id="profileMenu" onclick="toggleDropdown()">
+            <div class="profile-trigger">
+                <div class="avatar-circle">👤</div>
+                <span class="username-text">{{ session.username }}</span>
+            </div>
+            
+            <div class="dropdown-content">
+                <a href="/profile">USER_PROFILE</a>
+                <a href="/dashboard">ANALYTICS_DASHBOARD</a>
+                <a href="/settings">SYSTEM_SETTINGS</a>
+                <hr style="border: 0; border-top: 1px solid #333; margin: 0;">
+                <a href="/logout" style="color: #ff0055;">TERMINATE_SESSION</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        {% block content %}{% endblock %}
+    </div>
+
+    <script>
+        function toggleDropdown() {
+            document.getElementById("profileMenu").classList.toggle("active");
+        }
+
+        // Close dropdown if user clicks outside
+        window.onclick = function(event) {
+            if (!event.target.closest('.user-menu')) {
+                document.getElementById("profileMenu").classList.remove("active");
+            }
+        }
+    </script>
+</body>
+</html>

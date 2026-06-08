@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VISH_SCAN | Fraud Call Analysis</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Rajdhani', sans-serif;
+            background: #020b14 url('https://i.pinimg.com/736x/7d/53/78/7d5378816e3c4c324d587d02048acdef.jpg') no-repeat center center fixed;
+            background-size: cover;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* Dark Overlay for Readability */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 8, 20, 0.7);
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            width: 450px;
+            padding: 40px;
+            background: rgba(10, 25, 41, 0.9);
+            border: 2px solid #00f2ff;
+            border-radius: 15px;
+            box-shadow: 0 0 25px rgba(0, 242, 255, 0.4), inset 0 0 15px rgba(0, 242, 255, 0.1);
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: #00f2ff;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px rgba(0, 242, 255, 0.7);
+        }
+
+        .input-group {
+            text-align: left;
+            margin-bottom: 15px;
+        }
+
+        label {
+            color: #00f2ff;
+            font-size: 12px;
+            text-transform: uppercase;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 242, 255, 0.3);
+            border-radius: 5px;
+            color: white;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 16px;
+            outline: none;
+            box-sizing: border-box;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            border-color: #00f2ff;
+            box-shadow: 0 0 10px rgba(0, 242, 255, 0.4);
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            margin-top: 20px;
+            background: linear-gradient(45deg, #0072ff, #00f2ff);
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: 0.4s;
+        }
+
+        button:hover {
+            letter-spacing: 2px;
+            filter: brightness(1.2);
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.6);
+        }
+
+        #call_result {
+            margin-top: 30px;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            min-height: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px dashed rgba(255, 255, 255, 0.1);
+        }
+
+        /* Scanning Animation Line */
+        .scan-bar {
+            width: 100%;
+            height: 2px;
+            background: #00f2ff;
+            position: absolute;
+            top: 0; left: 0;
+            box-shadow: 0 0 15px #00f2ff;
+            animation: scan 4s linear infinite;
+            opacity: 0.5;
+        }
+
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="scan-bar"></div>
+    <h2>[CALL_ANALYSIS_PRO]</h2>
+
+    <div class="input-group">
+        <label>Intercepted Number</label>
+        <input type="text" id="phone_number" placeholder="+1-XXX-XXX-XXXX">
+    </div>
+
+    <div class="input-group">
+        <label>Call Duration (Seconds)</label>
+        <input type="number" id="duration" placeholder="e.g. 45">
+    </div>
+
+    <div class="input-group">
+        <label>Caller Status</label>
+        <select id="unknown_number">
+            <option value="1">Unknown / Hidden ID</option>
+            <option value="0">Verified Contact</option>
+        </select>
+    </div>
+
+    <button onclick="analyzeSignal()">Run Analysis</button>
+
+    <div id="call_result">SYSTEM READY: AWAITING INPUT...</div>
+</div>
+
+<script>
+    function analyzeSignal() {
+        const resultBox = document.getElementById("call_result");
+        const phone = document.getElementById("phone_number").value;
+        const dur = document.getElementById("duration").value;
+        const unknown = document.getElementById("unknown_number").value;
+
+        if (!phone) {
+            resultBox.innerText = "❌ ERROR: NO SIGNAL DETECTED";
+            resultBox.style.color = "#ff4d4d";
+            return;
+        }
+
+        resultBox.style.color = "#00f2ff";
+        resultBox.innerText = "DECRYPTING SIGNAL... PLEASE WAIT";
+
+        fetch("/check_call", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                phone_number: phone,
+                duration: dur,
+                unknown_number: unknown
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            // Check for alert symbols in your Python response strings
+            if (data.result.includes("🚨") || data.result.includes("⚠️") || data.result.includes("❌")) {
+                resultBox.style.color = "#ff4d4d"; // Red alert
+                resultBox.style.border = "1px solid #ff4d4d";
+            } else {
+                resultBox.style.color = "#00ff88"; // Secure Green
+                resultBox.style.border = "1px solid #00ff88";
+            }
+            resultBox.innerText = "REPORT: " + data.result;
+        })
+        .catch(err => {
+            resultBox.style.color = "#ff4d4d";
+            resultBox.innerText = "CRITICAL: UPLINK FAILED";
+        });
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Threat Intelligence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Rajdhani', sans-serif;
+            background: #020b14 url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2000&auto=format&fit=crop') no-repeat center center fixed;
+            background-size: cover;
+            color: #00f2ff;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        /* Digital Overlay */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, transparent 20%, #000 90%);
+            z-index: -1;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            margin: 40px 20px;
+            padding: 30px;
+            background: rgba(5, 15, 25, 0.85);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(0, 242, 255, 0.3);
+            border-radius: 8px;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.9);
+            text-align: center;
+            animation: fadeIn 1s ease-out;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: #00f2ff;
+            text-shadow: 0 0 15px rgba(0, 242, 255, 0.6);
+            margin-bottom: 30px;
+        }
+
+        /* Model Graph Styling */
+        img {
+            border: 2px solid #00f2ff;
+            border-radius: 4px;
+            margin-bottom: 30px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
+            transition: transform 0.3s ease;
+        }
+        
+        img:hover {
+            transform: scale(1.02);
+        }
+
+        /* Attractive Cyber Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            font-size: 1.1rem;
+        }
+
+        th {
+            background: rgba(0, 242, 255, 0.15);
+            color: #00f2ff;
+            font-family: 'Orbitron', sans-serif;
+            padding: 15px;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            border-bottom: 2px solid #00f2ff;
+            text-align: left;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(0, 242, 255, 0.1);
+            color: #ffffff;
+            text-align: left;
+        }
+
+        tr:hover {
+            background: rgba(0, 242, 255, 0.05);
+            cursor: default;
+        }
+
+        /* Status Colors - if you want to use them for result column */
+        td:nth-child(4) {
+            color: #00ffaa; /* Success Green */
+            font-weight: bold;
+        }
+
+        /* Action Link */
+        a {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 12px 25px;
+            border: 1px solid #00f2ff;
+            color: #00f2ff;
+            text-decoration: none;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            transition: 0.4s;
+        }
+
+        a:hover {
+            background: #00f2ff;
+            color: #000;
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.5);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Scrollbar for Cyber Look */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #020b14;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #00f2ff;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="container">
+        <h2>System Audit Logs</h2>
+        
+        
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Module Type</th>
+                    <th>Analyzed Input</th>
+                    <th>Result/Status</th>
+                    <th>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                <tr>
+                    <td>{{ log[0] }}</td>
+                    <td><span style="color: #00f2ff;">{{ log[1] }}</span></td>
+                    <td>{{ log[2] }}</td>
+                    <td>{{ log[3] }}</td>
+                    <td><small>{{ log[4] }}</small></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <a href="/">Initialize System Reset</a>
+    </div>
+</body>
+</html>

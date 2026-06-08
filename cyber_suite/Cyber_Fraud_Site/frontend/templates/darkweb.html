@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Dark Web Email Leak Check</title>
+
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&display=swap');
+
+body{
+margin:0;
+font-family:"Fira Code",monospace;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+color:#00ff41;
+overflow:hidden;
+
+background:url("https://wallpapercave.com/wp/wp2406485.jpg");
+background-size:cover;
+background-position:center;
+}
+
+.container{
+width:450px;
+padding:40px;
+background:rgba(15,15,15,0.95);
+text-align:center;
+box-shadow:0 0 25px rgba(0,255,65,0.3);
+border:1px solid #00ff41;
+max-height:90vh;
+overflow-y:auto;
+position:relative;
+}
+
+/* scanline overlay */
+.container::before{
+content:"";
+position:absolute;
+top:0;
+left:0;
+right:0;
+bottom:0;
+background:linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.25) 50%);
+background-size:100% 2px;
+pointer-events:none;
+}
+
+h2{
+margin-bottom:25px;
+text-transform:uppercase;
+letter-spacing:2px;
+text-shadow:0 0 10px #00ff41;
+}
+
+h3{
+color:#ff3e3e;
+font-size:14px;
+margin-top:25px;
+margin-bottom:15px;
+text-transform:uppercase;
+}
+
+/* email input */
+
+input{
+width:100%;
+padding:12px;
+border:1px solid #00ff41;
+background:#000;
+margin-bottom:15px;
+font-size:15px;
+color:#00ff41;
+outline:none;
+box-sizing:border-box;
+}
+
+input:focus{
+box-shadow:0 0 15px rgba(0,255,65,0.4);
+border-color:#fff;
+}
+
+/* button */
+
+button{
+width:100%;
+padding:14px;
+border:1px solid #00ff41;
+font-size:15px;
+font-weight:bold;
+cursor:pointer;
+background:transparent;
+color:#00ff41;
+text-transform:uppercase;
+transition:0.3s;
+}
+
+button:hover{
+background:#00ff41;
+color:black;
+box-shadow:0 0 20px rgba(0,255,65,0.6);
+}
+
+/* result */
+
+#result{
+margin-top:20px;
+font-size:16px;
+font-weight:bold;
+color:white;
+}
+
+/* logs */
+
+ul{
+list-style:none;
+padding:0;
+}
+
+ul li{
+font-size:13px;
+color:#888;
+border-bottom:1px solid #222;
+padding:6px 0;
+}
+
+/* read more button */
+
+#read-more-btn{
+margin-top:10px;
+background:#222;
+color:#888;
+border:1px solid #444;
+font-size:11px;
+padding:6px;
+}
+
+#read-more-btn:hover{
+background:#333;
+color:#fff;
+}
+
+/* back link */
+
+a{
+display:inline-block;
+margin-top:20px;
+text-decoration:none;
+color:#888;
+font-size:12px;
+}
+
+a:hover{
+color:#00ff41;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>[ DARKWEB_EMAIL_SCAN ]</h2>
+
+<input type="email" id="email" placeholder="ENTER_EMAIL@DOMAIN.COM">
+
+<button onclick="checkDarkWeb()">INITIALIZE SCAN</button>
+
+<p id="result">SYSTEM READY...</p>
+
+<div style="margin-top:30px;text-align:left">
+
+<h3>> DATA_BREACH_LOGS:</h3>
+
+<ul>
+<li>• test@gmail.com</li>
+<li>• admin@yahoo.com</li>
+<li>• user123@hotmail.com</li>
+<li>• hack@example.com</li>
+<li>• victim@outlook.com</li>
+</ul>
+
+<div id="more-examples" style="display:none">
+
+<ul>
+<li>• breached@protonmail.com</li>
+<li>• leaked@icloud.com</li>
+<li>• exposed@live.com</li>
+<li>• compromised@gmail.com</li>
+<li>• hacked@ymail.com</li>
+</ul>
+
+</div>
+
+<button id="read-more-btn" onclick="toggleExamples()">EXPAND_LOGS</button>
+
+</div>
+
+<a href="/home">RETURN TO DASHBOARD</a>
+
+</div>
+
+<script>
+
+function checkDarkWeb(){
+
+const email=document.getElementById("email").value.trim();
+const result=document.getElementById("result");
+
+if(email===""){
+result.innerText="⚠ ENTER EMAIL ADDRESS";
+return;
+}
+
+result.innerText="SCANNING DARK WEB DATABASE...";
+
+fetch("/check_darkweb",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({email:email})
+
+})
+
+.then(res=>res.json())
+
+.then(data=>{
+
+result.innerText="RESULT: "+data.result;
+
+})
+
+.catch(error=>{
+
+result.innerText="ERROR: SERVER CONNECTION FAILED";
+
+});
+
+}
+
+
+function toggleExamples(){
+
+const more=document.getElementById("more-examples");
+const btn=document.getElementById("read-more-btn");
+
+if(more.style.display==="none"){
+
+more.style.display="block";
+btn.innerText="COLLAPSE_LOGS";
+
+}
+else{
+
+more.style.display="none";
+btn.innerText="EXPAND_LOGS";
+
+}
+
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Cyber Fraud Detection Suite</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Rajdhani', sans-serif;
+            background: #020b14;
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(0, 255, 170, 0.1) 0%, transparent 80%),
+                url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            color: #e0fbfc;
+            overflow: hidden;
+        }
+
+        /* Scanline Effect */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: rgba(0, 255, 170, 0.3);
+            z-index: 10;
+            animation: scanning 4s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes scanning {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+
+        /* --- ONLY CHANGED: Small Realistic Top Buttons --- */
+        .user-nav-header {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            text-align: right;
+            z-index: 100;
+        }
+
+        .user-nav-header p {
+            margin: 0 0 5px 0;
+            color: #00f2ff;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .btn-top {
+            padding: 5px 12px; /* Very compact size */
+            margin-left: 5px;
+            cursor: pointer;
+            border-radius: 3px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            font-size: 0.65rem; /* Small text */
+            transition: all 0.2s ease;
+            display: inline-block;
+            text-decoration: none;
+            text-transform: uppercase;
+            border: none;
+            outline: none;
+        }
+
+        .profile-btn {
+            background: linear-gradient(180deg, #00f2ff 0%, #0088cc 100%);
+            color: #020b14;
+            box-shadow: 0 2px 0 #005a87;
+        }
+
+        .logout-btn {
+            background: linear-gradient(180deg, #ff4d4d 0%, #b30000 100%);
+            color: white;
+            box-shadow: 0 2px 0 #7a0000;
+        }
+
+        .btn-top:hover {
+            filter: brightness(1.2);
+            transform: translateY(-1px);
+        }
+
+        .btn-top:active {
+            transform: translateY(1px);
+            box-shadow: 0 0 0 transparent;
+        }
+
+        /* --- KEPT ORIGINAL: Main Container & Center Buttons --- */
+        .container {
+            position: relative;
+            z-index: 2;
+            width: 90%;
+            max-width: 900px;
+            padding: 50px;
+            background: rgba(5, 15, 25, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 255, 170, 0.3);
+            border-radius: 20px;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(0, 255, 170, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            color: #00ffaa;
+            text-shadow: 0 0 15px rgba(0, 255, 170, 0.7);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #8899a6;
+            margin-bottom: 40px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .btn {
+            position: relative;
+            padding: 15px 25px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            font-weight: bold;
+            text-decoration: none;
+            color: #00ffaa;
+            background: transparent;
+            border: 1px solid #00ffaa;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            display: block;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background: rgba(0, 255, 170, 0.1);
+            box-shadow: 0 0 20px rgba(0, 255, 170, 0.5), inset 0 0 10px rgba(0, 255, 170, 0.2);
+            transform: translateY(-3px);
+            color: #fff;
+        }
+
+        .btn[href="/admin"] {
+            border-color: #ff3e3e;
+            color: #ff3e3e;
+        }
+
+        .btn[href="/admin"]:hover {
+            background: rgba(255, 62, 62, 0.1);
+            box-shadow: 0 0 20px rgba(255, 62, 62, 0.5);
+            border-color: #ff3e3e;
+        }
+
+        .container::after {
+            content: "SECURE_CONNECTION: ACTIVE";
+            position: absolute;
+            bottom: 10px;
+            right: 20px;
+            font-size: 0.6rem;
+            color: #00ffaa;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="user-nav-header">
+        <p>👤 {{ session.username }}</p>
+        <a href="/profile"><button class="btn-top profile-btn">Profile</button></a>
+        <a href="/logout"><button class="btn-top logout-btn">Logout</button></a>
+    </div>
+
+    <div class="container">
+        <h1>AI Cyber Fraud Detection Suite</h1>
+        <p class="subtitle">Detect Phishing, UPI Fraud & Dark Web Leaks</p>
+        <div class="buttons">
+            <a href="/phishing" class="btn">Phishing Detection</a>
+            <a href="/upi" class="btn">UPI Fraud Detection</a>
+            <a href="/darkweb" class="btn">Dark Web Check</a>
+            <a href="/sms" class="btn">SMS Spam Detection</a>
+            <a href="/call" class="btn">Fraud Call Detection</a>
+            <a href="/admin" class="btn">Admin Dashboard</a>
+            <a href="/dashboard" class="btn dashboard-btn">Dashboard Analytics</a>
+        </div>
+    </div>
+
+</body>
+</html>

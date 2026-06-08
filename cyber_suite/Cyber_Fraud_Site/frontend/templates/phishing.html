@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Phishing URL Detection</title>
+
+   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap');
+
+    body {
+        margin: 0;
+        font-family: "Poppins", sans-serif;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        
+        /* Cyber Security Tech Background */
+        background: #020b14 url('https://cdn-siteera-com.siteera.online/q:lossless/r:0/wp:1/w:1/u:https://siteera.com/wp-content/uploads/2024/01/phishing-featured.png') no-repeat center center fixed;
+        background-size: cover;
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Digital Grid Overlay */
+    body::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: radial-gradient(circle, transparent 20%, #020b14 90%),
+                    linear-gradient(rgba(0, 255, 255, 0.05) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(0, 255, 255, 0.05) 1px, transparent 1px);
+        background-size: 100% 100%, 30px 30px, 30px 30px;
+        z-index: 1;
+    }
+
+    .container {
+        position: relative;
+        z-index: 2;
+        width: 450px;
+        padding: 40px;
+        text-align: center;
+        border-radius: 4px; /* Sharper edges for industrial look */
+
+        /* Enhanced Glassmorphism */
+        background: rgba(5, 15, 25, 0.85);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(0, 255, 255, 0.3);
+
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.8), 
+                    inset 0 0 15px rgba(0, 255, 255, 0.1);
+
+        animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        max-height: 90vh;
+        overflow-y: auto;
+        color: #00ffff;
+    }
+
+    h2 {
+        font-family: 'Orbitron', sans-serif;
+        margin-bottom: 25px;
+        color: #00ffff;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    }
+
+    h3 {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 13px;
+        letter-spacing: 1px;
+        margin-top: 25px;
+        margin-bottom: 15px;
+    }
+
+    input {
+        width: 100%;
+        padding: 14px;
+        margin-bottom: 15px;
+        border-radius: 4px;
+        border: 1px solid rgba(0, 255, 255, 0.2);
+        background: rgba(0, 0, 0, 0.6);
+        color: #fff;
+        font-size: 15px;
+        outline: none;
+        transition: 0.3s;
+        box-sizing: border-box;
+    }
+
+    input:focus {
+        border-color: #00ffff;
+        box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+        background: rgba(0, 0, 0, 0.8);
+    }
+
+    button {
+        margin-top: 15px;
+        width: 100%;
+        padding: 14px;
+        border: 1px solid #00ffff;
+        border-radius: 4px;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 14px;
+        font-weight: bold;
+        color: #00ffff;
+        cursor: pointer;
+        background: transparent;
+        transition: 0.3s;
+        text-transform: uppercase;
+    }
+
+    button:hover {
+        background: #00ffff;
+        color: #000;
+        box-shadow: 0 0 20px #00ffff;
+    }
+
+    #result {
+        margin-top: 20px;
+        font-size: 16px;
+        font-family: 'Orbitron', sans-serif;
+        color: #00ff9d;
+        text-shadow: 0 0 5px rgba(0, 255, 157, 0.5);
+    }
+
+    a {
+        display: inline-block;
+        margin-top: 25px;
+        text-decoration: none;
+        color: rgba(0, 255, 255, 0.6);
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    a:hover {
+        color: #00ffff;
+    }
+
+    /* Custom scrollbar for cyber look */
+    .container::-webkit-scrollbar {
+        width: 5px;
+    }
+    .container::-webkit-scrollbar-track {
+        background: rgba(0,0,0,0.1);
+    }
+    .container::-webkit-scrollbar-thumb {
+        background: #00ffff;
+    }
+
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(40px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h2>🛡️ Phishing URL Detection</h2>
+
+        <input type="text" id="url" placeholder="Enter Website URL">
+
+        <button onclick="checkPhishing()">Check URL</button>
+
+        <p id="result"></p>
+
+        <div style="margin-top: 30px; text-align: left;">
+            <h3 style="color: #c33764; margin-bottom: 10px;">⚠️ Known Phishing URLs (Examples):</h3>
+            <ul style="color: #666; font-size: 14px; list-style-type: none; padding: 0;">
+                <li>• fakebank-login.com</li>
+                <li>• secure-paypal-update.net</li>
+                <li>• amazon-verify-account.org</li>
+                <li>• netflix-account-fix.com</li>
+                <li>• google-drive-share.ru</li>
+            </ul>
+            <div id="more-examples" style="display: none;">
+                <ul style="color: #666; font-size: 14px; list-style-type: none; padding: 0;">
+                    <li>• microsoft-support-help.xyz</li>
+                    <li>• apple-id-verify.co</li>
+                    <li>• facebook-security-alert.com</li>
+                    <li>• bankofamerica-secure.com</li>
+                    <li>• chase-login-update.net</li>
+            
+                </ul>
+            </div>
+            <button id="read-more-btn" onclick="toggleExamples()" style="margin-top: 10px; padding: 8px 16px; background: #c33764; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 12px;">Read More</button>
+        </div>
+
+        <a href="/">⬅ Back to Home</a>
+
+    </div>
+
+    <script>
+
+        function checkPhishing() {
+
+            const url = document.getElementById("url").value;
+
+            fetch("/check_phishing", {
+
+                method: "POST",
+
+                headers: { 'Content-Type': 'application/json' },
+
+                body: JSON.stringify({ url: url })
+
+            })
+
+                .then(res => res.json())
+
+                .then(data => {
+                    document.getElementById("result").innerText = data.result;
+                });
+
+        }
+
+        function toggleExamples() {
+            const moreExamples = document.getElementById("more-examples");
+            const readMoreBtn = document.getElementById("read-more-btn");
+
+            if (moreExamples.style.display === "none") {
+                moreExamples.style.display = "block";
+                readMoreBtn.innerText = "Read Less";
+            } else {
+                moreExamples.style.display = "none";
+                readMoreBtn.innerText = "Read More";
+            }
+        }
+
+    </script>
+
+</body>
+
+</html>

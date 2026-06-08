@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPI SENTINEL | Cyber Fraud Detection</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #020b14;
+            --box-bg: rgba(5, 15, 25, 0.95);
+            --primary-glow: #00f2ff;
+            --secondary-glow: #7000ff;
+            --text-muted: #8899a6;
+            --error-red: #ff0055;
+            --warning-orange: #ffaa00;
+            --safe-green: #00ff88;
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--bg-color) url('https://wallpapercave.com/wp/wp2757874.gif') no-repeat center center fixed;
+            background-size: cover;
+            overflow: hidden;
+            color: #fff;
+        }
+
+        /* CRT Scanline Effect Overlay */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 2px);
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .container {
+            background: var(--box-bg);
+            width: 900px;
+            max-width: 95%;
+            min-height: 520px;
+            border: 1px solid rgba(0, 242, 255, 0.3);
+            display: flex;
+            position: relative;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+        }
+
+        .panel { padding: 40px; flex: 1; z-index: 5; display: flex; flex-direction: column; }
+        .input-panel { border-right: 1px solid rgba(0, 242, 255, 0.1); }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 26px;
+            letter-spacing: 5px;
+            color: var(--primary-glow);
+            margin: 0 0 5px 0;
+            text-shadow: 0 0 15px rgba(0, 242, 255, 0.6);
+        }
+
+        .subtitle { 
+            font-size: 10px; 
+            letter-spacing: 4px; 
+            color: var(--secondary-glow); 
+            margin-bottom: 30px; 
+            text-transform: uppercase; 
+        }
+
+        .input-group { margin-bottom: 15px; }
+        label { font-size: 11px; color: var(--text-muted); margin-bottom: 5px; display: block; letter-spacing: 1px; }
+
+        input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(0, 242, 255, 0.2);
+            padding: 12px;
+            color: #fff;
+            font-family: 'Rajdhani', sans-serif;
+            border-left: 3px solid var(--primary-glow);
+            box-sizing: border-box;
+            transition: 0.3s;
+        }
+
+        input:focus { outline: none; border-color: var(--primary-glow); background: rgba(0, 242, 255, 0.05); }
+
+        /* QR Scanner Area */
+        .scan-zone {
+            border: 1px dashed var(--primary-glow);
+            height: 90px;
+            margin: 20px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            background: rgba(0, 242, 255, 0.02);
+        }
+
+        .scanner-line {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: var(--primary-glow);
+            box-shadow: 0 0 15px var(--primary-glow);
+            animation: scan 2.5s linear infinite;
+            top: 0;
+        }
+
+        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
+
+        /* Right Panel: Result Focus */
+        .status-panel { 
+            background: rgba(0, 0, 0, 0.4); 
+            align-items: center; 
+            justify-content: center; 
+            text-align: center;
+        }
+        
+        .risk-meter { position: relative; width: 260px; height: 140px; }
+        .risk-meter svg { width: 100%; transform: rotate(-180deg); }
+
+        
+
+        #risk-arc {
+            transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.8s;
+            stroke-dasharray: 126; 
+            stroke-dashoffset: 126;
+            stroke-linecap: round;
+        }
+
+        .risk-value {
+            position: absolute;
+            bottom: 0px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Orbitron';
+            font-size: 52px;
+            color: var(--primary-glow);
+            margin: 0;
+        }
+
+        .result-label {
+            font-family: 'Orbitron';
+            font-size: 18px;
+            letter-spacing: 2px;
+            margin-top: 40px;
+            padding: 10px 20px;
+            border: 1px solid transparent;
+            transition: 0.5s;
+            min-height: 30px;
+        }
+
+        /* Result States */
+        .status-secure { color: var(--safe-green); text-shadow: 0 0 10px var(--safe-green); }
+        .status-warning { color: var(--warning-orange); text-shadow: 0 0 10px var(--warning-orange); }
+        .status-fraud { 
+            color: var(--error-red); 
+            text-shadow: 0 0 15px var(--error-red); 
+            animation: glitch-text 0.2s infinite;
+            border: 1px solid var(--error-red);
+        }
+
+        @keyframes glitch-text {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+
+        .analyze-btn {
+            width: 100%;
+            padding: 15px;
+            background: transparent;
+            border: 1px solid var(--primary-glow);
+            color: var(--primary-glow);
+            font-family: 'Orbitron';
+            cursor: pointer;
+            transition: 0.4s;
+            margin-top: 20px;
+            letter-spacing: 2px;
+        }
+
+        .analyze-btn:hover { background: var(--primary-glow); color: #000; box-shadow: 0 0 25px var(--primary-glow); }
+        
+        .cyber-switch { font-size: 11px; display: flex; align-items: center; gap: 10px; cursor: pointer; color: var(--text-muted); margin-top: 10px;}
+        .cyber-switch input { accent-color: var(--primary-glow); }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="panel input-panel">
+            <h1>UPI SENTINEL</h1>
+            <p class="subtitle">Neural Fraud Detection Protocol</p>
+            
+            <form id="upiForm">
+                <div class="input-group">
+                    <label>TRANSACTION AMOUNT (INR)</label>
+                    <input type="number" name="amount" id="amount" placeholder="0.00" step="0.01">
+                </div>
+
+                <div class="input-group">
+                    <label>TARGET UPI ID</label>
+                    <input type="text" name="upi_id" id="upi_id" placeholder="Enter ID or Scan QR">
+                </div>
+
+                <div class="scan-zone" onclick="document.getElementById('qr_image').click()">
+                    <div class="scanner-line"></div>
+                    <span id="file-label">UPLOAD QR SCREENSHOT</span>
+                    <input type="file" name="qr_image" id="qr_image" hidden accept="image/*">
+                </div>
+
+                <div style="display: flex; gap: 20px;">
+                    <label class="cyber-switch"><input type="checkbox" name="location_change" value="1"> NEW LOC?</label>
+                    <label class="cyber-switch"><input type="checkbox" name="device_change" value="1"> NEW DEV?</label>
+                </div>
+
+                <button type="button" class="analyze-btn" onclick="runAnalysis()">RUN NEURAL SCAN</button>
+            </form>
+        </div>
+
+        <div class="panel status-panel">
+            <div class="risk-meter">
+                <svg viewBox="0 0 100 50">
+                    <path d="M 10 45 A 40 40 0 0 1 90 45" fill="none" stroke="#111" stroke-width="8"/>
+                    <path id="risk-arc" d="M 10 45 A 40 40 0 0 1 90 45" fill="none" stroke="var(--primary-glow)" stroke-width="8"/>
+                </svg>
+                <h2 class="risk-value" id="risk-percent">0%</h2>
+            </div>
+
+            <div id="status-verdict" class="result-label">
+                SYSTEM IDLE
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Update label when file is chosen
+        document.getElementById('qr_image').addEventListener('change', function(e) {
+            const fileName = e.target.files[0] ? e.target.files[0].name : "UPLOAD QR SCREENSHOT";
+            document.getElementById('file-label').innerText = fileName;
+        });
+
+        async function runAnalysis() {
+            const form = document.getElementById('upiForm');
+            const formData = new FormData(form);
+            const riskArc = document.getElementById('risk-arc');
+            const riskText = document.getElementById('risk-percent');
+            const verdictLabel = document.getElementById('status-verdict');
+
+            // Reset UI for scanning feel
+            verdictLabel.innerText = "SCANNING...";
+            verdictLabel.className = "result-label";
+            riskArc.style.strokeDashoffset = 126;
+
+            try {
+                const response = await fetch('/check_upi', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                // Robust Regex to find the number within the result string (e.g., "(85%)")
+                const numbers = data.result.match(/\d+/);
+                let percentage = numbers ? parseInt(numbers[0]) : 0;
+                percentage = Math.min(Math.max(percentage, 0), 100);
+
+                // Update Meter Arc (126 is full dash)
+                const offset = 126 - (126 * (percentage / 100));
+                riskArc.style.strokeDashoffset = offset;
+                riskText.innerText = percentage + "%";
+
+                // Clean up the text result (Remove the percentage part for the label)
+                let cleanResult = data.result.replace(/\(\d+%\)/, '').trim();
+
+                // Assign Severity Styles
+                if (percentage >= 70) {
+                    riskArc.style.stroke = "var(--error-red)";
+                    riskText.style.color = "var(--error-red)";
+                    verdictLabel.innerText = cleanResult;
+                    verdictLabel.className = "result-label status-fraud";
+                } else if (percentage >= 40) {
+                    riskArc.style.stroke = "var(--warning-orange)";
+                    riskText.style.color = "var(--warning-orange)";
+                    verdictLabel.innerText = cleanResult;
+                    verdictLabel.className = "result-label status-warning";
+                } else {
+                    riskArc.style.stroke = "var(--safe-green)";
+                    riskText.style.color = "var(--safe-green)";
+                    verdictLabel.innerText = cleanResult;
+                    verdictLabel.className = "result-label status-secure";
+                }
+
+                // If QR scan extracted a UPI ID, update the input field
+                if (data.upi_id) {
+                    document.getElementById('upi_id').value = data.upi_id;
+                }
+
+            } catch (err) {
+                verdictLabel.innerText = "SYSTEM ERROR";
+                verdictLabel.style.color = "var(--error-red)";
+                console.error(err);
+            }
+        }
+    </script>
+</body>
+</html>

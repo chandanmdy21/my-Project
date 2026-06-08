@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TERMINAL_DASHBOARD | CYBER_SENTINEL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --neon-green: #00ffaa;
+            --neon-blue: #00f2ff;
+            --neon-red: #ff0055;
+            --bg-dark: #020b14;
+            --glass: rgba(0, 255, 170, 0.05);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: var(--bg-dark);
+            color: #fff;
+            font-family: 'Rajdhani', sans-serif;
+            background-image: 
+                linear-gradient(rgba(0, 242, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 242, 255, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        /* CRT Scanline Overlay */
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header-section {
+            border-bottom: 1px solid var(--neon-green);
+            margin-bottom: 40px;
+            padding-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 24px;
+            letter-spacing: 5px;
+            color: var(--neon-green);
+            margin: 0;
+            text-shadow: 0 0 15px rgba(0, 255, 170, 0.4);
+        }
+
+        .timestamp {
+            font-family: 'Orbitron';
+            font-size: 10px;
+            color: var(--neon-blue);
+        }
+
+        /* STAT CARDS */
+        .grid-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: var(--glass);
+            border: 1px solid rgba(0, 255, 170, 0.2);
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            border-color: var(--neon-green);
+            background: rgba(0, 255, 170, 0.1);
+            box-shadow: 0 0 20px rgba(0, 255, 170, 0.1);
+        }
+
+        .card h3 {
+            margin: 0;
+            font-size: 11px;
+            letter-spacing: 2px;
+            color: var(--neon-blue);
+            text-transform: uppercase;
+        }
+
+        .card .value {
+            font-family: 'Orbitron';
+            font-size: 32px;
+            margin-top: 10px;
+            display: block;
+        }
+
+        /* Highlight total scans differently */
+        .total-card {
+            border-left: 4px solid var(--neon-blue);
+        }
+
+        /* CHART AREA */
+        .chart-box {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(0, 242, 255, 0.1);
+            padding: 30px;
+            position: relative;
+        }
+
+        .chart-label {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-family: 'Orbitron';
+            font-size: 9px;
+            color: var(--neon-green);
+            opacity: 0.6;
+        }
+
+        .btn-nav {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 10px 25px;
+            border: 1px solid var(--neon-blue);
+            color: var(--neon-blue);
+            text-decoration: none;
+            font-family: 'Orbitron';
+            font-size: 10px;
+            letter-spacing: 2px;
+            transition: 0.3s;
+        }
+
+        .btn-nav:hover {
+            background: var(--neon-blue);
+            color: #000;
+            box-shadow: 0 0 20px var(--neon-blue);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="data-bridge" 
+         data-labels="{{ labels | join(',') }}" 
+         data-values="{{ values | join(',') }}" 
+         style="display:none;"></div>
+
+    <div class="container">
+        <div class="header-section">
+            <h1>THREAT_ANALYTICS_V1.0</h1>
+            <div class="timestamp" id="live-clock">SYSTEM_STABLE // 00:00:00</div>
+        </div>
+
+        <div class="grid-stats">
+            <div class="card total-card">
+                <h3>TOTAL_OPERATIONS</h3>
+                <span class="value" style="color: var(--neon-blue);">{{ total }}</span>
+            </div>
+
+            {% for i in range(labels|length) %}
+            <div class="card">
+                <h3>{{ labels[i] | replace('_', ' ') }}</h3>
+                <span class="value">{{ values[i] }}</span>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="chart-box">
+            <span class="chart-label">VECTOR_DISTRIBUTION_MAPPING</span>
+            <canvas id="threatChart" height="100"></canvas>
+        </div>
+
+        <a href="/" class="btn-nav">RETURN_TO_TERMINAL</a>
+    </div>
+
+    <script>
+        // 1. UPDATE CLOCK
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('live-clock').innerText = `SYSTEM_ACTIVE // ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
+        }, 1000);
+
+        // 2. FETCH DATA FROM BRIDGE
+        const bridge = document.getElementById('data-bridge');
+        const labels = bridge.dataset.labels ? bridge.dataset.labels.split(',') : [];
+        const values = bridge.dataset.values ? bridge.dataset.values.split(',').map(Number) : [];
+
+        // 3. INITIALIZE CHART
+        const ctx = document.getElementById('threatChart').getContext('2d');
+        
+        // Global Chart Defaults
+        Chart.defaults.color = '#8899a6';
+        Chart.defaults.font.family = 'Rajdhani';
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'COUNT',
+                    data: values,
+                    backgroundColor: 'rgba(0, 255, 170, 0.15)',
+                    borderColor: '#00ffaa',
+                    borderWidth: 2,
+                    hoverBackgroundColor: '#00ffaa'
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { 
+                        beginAtZero: true,
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        ticks: { font: { family: 'Orbitron', size: 10 } }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { weight: 'bold' } }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
